@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>Type-Value of string</h1>
+</body>
+<script>
+    const inputval = "#exmple || @name && user_email";
+    console.log(inputval);
+    let inputValArr = inputval.trim().split(" "); // trim for whitespaces
+
+    // array containing symbolchar
+    const symbolchar = ['#', '|', '@', '&'];
+
+    // object containing operators as key 
+    const bothCharSymbol = {
+        "||": {
+            type: 'operator',
+            value: 'OR'
+        },
+        "&&": {
+            type: 'operator',
+            value: 'AND'
+        }
+    };
+
+    // object containing firstchars but not operators
+    const firstCharSymbol = {
+        "#": { type: 'intent' },
+        "@": { type: 'entity' }
+    }
+
+    const outputVal = inputValArr.map((item) => {
+
+        let isFirstCharSymbol = CheckFirstChar(item);   // return true/false
+        let isSecondCharSymbol = CheckSecondChar(item);  // return true/false
+
+        if(isFirstCharSymbol ===true && isSecondCharSymbol === true && item.slice(2)===""){     // check if item contains only operator
+            let twoChars = item.slice(0,2);
+            let obj = {...bothCharSymbol[twoChars]};
+            // outputVal.push(obj);
+            return obj;
+        }
+        else if(isFirstCharSymbol === true && isSecondCharSymbol === false){
+            let firstChar = item.slice(0,1);
+            let obj = {};
+            obj.type = firstCharSymbol[firstChar].type;
+            obj.value = item.slice(1);
+            // outputVal.push(obj); 
+            return obj;
+        }
+        else if(isFirstCharSymbol ===false && isSecondCharSymbol === false){
+            if(item.slice(0,1).match(/[a-z]/i) && item.slice(0,2).match(/[a-z]/i)){   // check if first two value are strictly alphabets
+                let obj = {};
+            obj.type = 'variable';
+            obj.value = item;
+            // outputVal.push(obj); 
+            return obj;   
+        }
+        }
+    });
+
+    console.log(outputVal);
+
+    function CheckFirstChar(item){
+        let firstChar = item.slice(0,1);
+        let result = symbolchar.includes(firstChar);
+        return result;
+    }
+    function CheckSecondChar(item){
+        let secodChar = item.slice(1,2);
+        let result = symbolchar.includes(secodChar);
+        return result;
+    }
+</script>
+
+</html>
